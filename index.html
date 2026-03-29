@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ring Calculator</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      padding: 0;
+      background-image: url("https://images.unsplash.com/photo-1605100804763-247f67b3557e");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      padding: 40px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.92);
+      padding: 20px;
+      border-radius: 10px;
+      width: 50%;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .quotation {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-top: 10px;
+    }
+
+    #status_msg {
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- LEFT -->
+  <div class="card">
+
+    <h2>Ring Price Calculator</h2>
+
+    <input id="width" placeholder="Width (mm)">
+    <input id="thickness" placeholder="Thickness (mm)">
+    <input id="diameter" placeholder="Diameter (mm)">
+
+    <select id="shape">
+      <option value="0.92">Normal</option>
+      <option value="0.95">Comfort Fit</option>
+      <option value="0.8">Hollow</option>
+    </select>
+
+    <input id="carat" placeholder="Diamond Carat">
+
+    <select id="diamond_type">
+      <option value="lab">Lab Diamond</option>
+      <option value="natural">Natural Diamond</option>
+    </select>
+
+    <input id="workmanship_input" placeholder="Workmanship (RM)">
+
+    <button id="calcBtn">Calculate Price</button>
+
+    <p id="status_msg"></p>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="card">
+
+    <h3>📌 Instructions</h3>
+    <ul>
+      <li>Additional 0.2mm for wastage</li>
+      <li>Take Average reading for different thickness</li>
+      <li>Premium Design RM599/RM699/RM899</li>
+      <li>Special Texture RM400/RM500/RM800</li>
+      <li>Change design fee RM300</li>
+      <li>CNC Needed RM600</li>
+      <li>Additonal Diamond RM180/1pcs </li>
+      <li>来图定制、现有款式 RM 0 </li>
+    </ul>
+
+    <div class="quotation">
+      <p id="weight_out"></p>
+      <p id="gold_out"></p>
+      <p id="diamond_out"></p>
+      <p id="workmanship_out"></p>
+      <h3 id="total_out"></h3>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "https://txswumdhxcfzaojsirte.supabase.co"
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4c3d1bWRoeGNmemFvanNpcnRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MTkxNzIsImV4cCI6MjA5MDE5NTE3Mn0.k9yfHCacdOIpB-sQWWQNvUe0czn7LQ4zREHW-7my4bI"
+
+const client = supabase.createClient(supabaseUrl, supabaseKey)
+
+async function calculate() {
+
+  const width = parseFloat(document.getElementById('width').value) || 0
+  const thickness = parseFloat(document.getElementById('thickness').value) || 0
+  const diameter = parseFloat(document.getElementById('diameter').value) || 0
+  const shape = parseFloat(document.getElementById('shape').value) || 0
+
+  const carat = parseFloat(document.getElementById('carat').value) || 0
+  const type = document.getElementById('diamond_type').value
+
+  if (width <= 0 || thickness <= 0 || diameter <= 0) {
+    alert("Please enter valid ring dimensions")
+    return
+  }
+
+  const { data, error } = await client
+    .from('settings')
+    .select('*')
+    .single()
+
+  if (error) {
+    alert(error.message)
+    return
+  }
+
+  const s = data
+
+  const weight =
+    width *
+    thickness *
+    3.14 *
+    diameter *
+    shape *
+    (s.density / 1000)
+
+  const gold_cost = weight * s.gold_price
+
+  let diamond_price = 0
+let diamond_extra = 0
+
+if (carat > 0) {
+  if (type === "lab") {
+    diamond_price = carat * s.lab_price
+  } else {
+    diamond_price = carat * s.natural_price
+  }
+
+  // ✅ automatic extra charge for any diamond ring
+  diamond_extra = 300
+}
+
+  const workmanship = parseFloat(document.getElementById('workmanship_input').value) || 0
+
+  const total = gold_cost + diamond_price + diamond_extra + workmanship
+
+  document.getElementById('weight_out').innerText = "Weight: " + weight.toFixed(2) + "g"
+  document.getElementById('gold_out').innerText = "Gold Cost: RM " + gold_cost.toFixed(0)
+  document.getElementById('diamond_out').innerText = "Diamond Cost: RM " + diamond_price.toFixed(0)
+  document.getElementById('workmanship_out').innerText = "Workmanship: RM " + workmanship.toFixed(0)
+  document.getElementById('total_out').innerText = "Total: RM " + total.toFixed(0)
+
+  // status message
+  document.getElementById('status_msg').innerText = "✅ Calculate Successful"
+}
+
+document.getElementById("calcBtn").addEventListener("click", calculate)
+</script>
+
+</body>
+</html>
