@@ -175,11 +175,21 @@ if (carat > 0) {
 
   const total = gold_cost + diamond_price + diamond_extra + workmanship
 
-  document.getElementById('weight_out').innerText = "Weight: " + weight.toFixed(2) + "g"
-  document.getElementById('gold_out').innerText = "Gold Cost: RM " + gold_cost.toFixed(0)
-  document.getElementById('diamond_out').innerText = "Diamond Cost: RM " + diamond_price.toFixed(0)
-  document.getElementById('workmanship_out').innerText = "Workmanship: RM " + workmanship.toFixed(0)
-  document.getElementById('total_out').innerText = "Total: RM " + total.toFixed(0)
+  document.getElementById('weight_out').innerText =
+  "Weight: " + weight.toFixed(2) + "g"
+
+document.getElementById('gold_out').innerText =
+  "Gold: " + weight.toFixed(2) + "g × RM " + s.gold_price +
+  " = RM " + gold_cost.toFixed(0)
+
+document.getElementById('diamond_out').innerText =
+  "Diamond: RM " + diamond_price.toFixed(0)
+
+document.getElementById('workmanship_out').innerText =
+  "Workmanship: RM " + workmanship.toFixed(0)
+
+document.getElementById('total_out').innerText =
+  "Total: RM " + total.toFixed(0)
 
   // status message
   document.getElementById('status_msg').innerText = "✅ Calculate Successful"
