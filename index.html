@@ -82,6 +82,7 @@
     <button id="calcBtn">Calculate Price</button>
 
     <p id="status_msg"></p>
+    <h3 id="left_total"></h3>
 
   </div>
 
@@ -176,8 +177,9 @@ if (carat > 0) {
   document.getElementById('weight_out').innerText =
   "Weight: " + weight.toFixed(2) + "g"
 
-document.getElementById('total_out').innerText =
-  "Total: RM " + total.toFixed(0)
+
+  document.getElementById('left_total').innerText =
+  "RM " + total.toFixed(0)
 
   // status message
   document.getElementById('status_msg').innerText = "✅ Calculate Successful"
